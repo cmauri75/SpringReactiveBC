@@ -17,18 +17,15 @@ import java.util.concurrent.ConcurrentMap;
 
 @SpringBootApplication
 public class OrdersApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(OrdersApplication.class, args);
     }
-
 }
 
 @Data
 @AllArgsConstructor
 class Order {
     private Integer orderId, CustomerId;
-
 }
 
 @Controller

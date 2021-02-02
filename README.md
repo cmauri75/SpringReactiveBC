@@ -54,5 +54,24 @@ ho bisogno di un client:
 wget -O rsc.jar https://github.com/making/rsc/releases/download/0.4.2/rsc-0.4.2.jar
 java -jar rsc.jar tcp://localhost:8081 --stream -r orders.3
 
-Adesso mi serve il gateway, terzo microservizio.
+Adesso mi serve il gateway, terzo microservizio. E' il punto che intercetta le richieste che arrivato alla rete, è qui che devo mettere AUTH, o redirect, routing, load balancing,
+compression, 
+Oltre a lombok, rsocket, config client, aggiungo reactive web e gateway
+
+Prima creo un API gateway con spring gateway. 
+Quando ricevo una richiesta ad una porta effettuo un route, per configurarle mi servono 3 cose: un predicato su cosa matchare, una destinazione e in mezzo un filtro, in cui posso fare di tutto.
+curl -v -H "Host: test.spring.io" http://localhost:9999/proxy
+Se cambio l'host non va più, posso fare comportamenti dinamici implementati anche su DB o nelle properties
+
+Adesso prendo i dati e li trasformo.
+
+CRMCLIENT
+Mi copio i due bean order e customer, costruisco i mock dei getter con return Flux.empty() e inietto webclient e rsocketrequester, poi li popolo per fare le invocazioni
+
+CustomerOrder
+Creo una view verso le mie sorgenti, implementa la composition get customerorders e la invoco da browser.
+Questa chiamerà in parallelo due servizi, un http e un rsoket, aggrega i risultati. 
+Posso aggiungere operatori per potenziare il funzionamento. In fondo a getCustomers posso mettere .retry,... 
+Ho un sacco di operatori built in che rendono more reliable, safe e scalable la mia funzionalità.
+
 

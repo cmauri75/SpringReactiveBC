@@ -67,7 +67,7 @@ public class RwaApplication {
 
             Mono<Integer> createDB = dbc.sql("create table  CUSTOMER (id serial primary key not null, name varchar(255) not null)").fetch().rowsUpdated();
 
-            var saved = Flux.just("cesare", "pipo", "pluto")
+            var saved = Flux.just("cesare", "pipo", "pluto", "plato", "paperino")
                     .map(name -> new Customer(null, name))
                     .flatMap(customerRepository::save);
 
