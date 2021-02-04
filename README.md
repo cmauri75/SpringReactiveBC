@@ -1,16 +1,22 @@
-Cloud, TDD, CI, Agile per essere più veloci, sbagliare prima e imparare dagli errori.
-Cloud si trova bene nel comportametne elastico di crescita e discesa del demand
-Piccoli team che lavorano su piccole parti in modo indipendente (importante) così sono veloci ed efficienti, non posso avere ae un jar che distribuisco perchè creo dipendenza, 
+RP permette di creare servizi più efficienti e resilienti che si sposano bene con gli ambienti cloud a microservizi.
+E' tutto un mondo nuovo in cui abbiamo una serie di tecnologie coesistenti. Tecnologie ma anche filosofia.
+
+Cloud, TDD, CI, Agile per essere più veloci, ho piccoli team agili (ossia veloci ed efficienti) che si occupano di un singolo task, veloci che possono permettersi di sbagliare prima,
+imparare dagli errori e arrivare ad un risultato migliore. Piuttosto che progettare tutto prima.
+Questo comporta ad esempio non posso avere ae un jar che distribuisco perché creo dipendenza, per contro avrò molto scambio di dati in rete.
+Con servizi che possono non essere disponibili ma anche ridondare.
+RP è un tassello
+
 Però creo nuovi problemi che non c'erano nel mondo monolitico.
 
 Normalmente ho diverse fonti dati da cui reperisco informazioni, diversi DB, servizi esterni, code, etc.. 
 RP astrae queste sorgenti permettendo:
--  comporle in modo semplice.
+- comporle in modo semplice.
 - gestire gli errori che possono sorgere
 - ti fa scrivere codice molto più multi-thread e resource-efficient
 
 Creiamo il progetto su: https://start.spring.io/
-Primo faciamo una reactive webapp con spring boot, lombok e actuator, config client, H2 database, Spring data r2dbc: chiamo customer
+Primo facciamo una reactive webapp con spring boot, lombok e actuator, config client, H2 database, Spring data r2dbc: chiamo customer
 Usiamo le api reactive che, a differenza di quelle normali dove faccio una richiesta e attendo una risposta, mando assieme alla richiesta una callback e mi sgancio. Sarà poi l'executor ad invocare la reazione di risposta asincronamente.
 
 Creo Customer e CustomerRepository
@@ -74,4 +80,5 @@ Questa chiamerà in parallelo due servizi, un http e un rsoket, aggrega i risult
 Posso aggiungere operatori per potenziare il funzionamento. In fondo a getCustomers posso mettere .retry,... 
 Ho un sacco di operatori built in che rendono more reliable, safe e scalable la mia funzionalità.
 
+Alibaba è fatto con questa filosofia.
 
