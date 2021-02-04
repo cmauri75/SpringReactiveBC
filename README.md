@@ -1,65 +1,87 @@
-RP permette di creare servizi più efficienti e resilienti che si sposano bene con gli ambienti cloud a microservizi.
-E' tutto un mondo nuovo in cui abbiamo una serie di tecnologie coesistenti. Tecnologie ma anche filosofia.
+RP è un framework che permette di creare servizi più efficienti, resilienti e dinamici che si sposano bene con gli ambienti cloud a micro-servizi.
 
-Cloud, TDD, CI, Agile per essere più veloci, ho piccoli team agili (ossia veloci ed efficienti) che si occupano di un singolo task, veloci che possono permettersi di sbagliare prima,
-imparare dagli errori e arrivare ad un risultato migliore. Piuttosto che progettare tutto prima.
-Questo comporta ad esempio non posso avere ae un jar che distribuisco perché creo dipendenza, per contro avrò molto scambio di dati in rete.
-Con servizi che possono non essere disponibili ma anche ridondare.
-RP è un tassello
+E' tutto un ecosistema nuovo in cui abbiamo una serie di tecnologie coesistenti. Tecnologie ma anche filosofia, noi in particolare vedremo come creare un sistema reactive con Spring.
 
-Però creo nuovi problemi che non c'erano nel mondo monolitico.
+Parlando in astratto abbiamo:
+Cloud, TDD, CI, Agile per essere più veloci, nel nuovo ecosistema abbiamo più piccoli team agili (ossia veloci ed efficienti) che si occupano di un singolo task, veloci affinchè possono permettersi di sbagliare prima,
+imparare dagli errori e arrivare ad un risultato migliore, lavorando a spirale. Piuttosto che progettare tutto prima.
 
-Normalmente ho diverse fonti dati da cui reperisco informazioni, diversi DB, servizi esterni, code, etc.. 
+Questo comporta limiti operativi, ad esempio non posso avere a un jar che distribuisco perché creo dipendenza, avrò però in cambio molto scambio di dati in rete.
+
+Questi servizi devono essere pensati in modo che possano non essere disponibili ma anche ridondare.
+RP è un tassello nell'econistema.
+
+Anche se creranno nuovi problemi che non c'erano nel mondo monolitico.
+
+Normalmente ho diverse fonti dati da cui reperisco informazioni, diversi DB, servizi esterni, code, etc..  
+Posso vedere il mio progetto come una serie di flussi di dati da elaborare e trasmettere.
+
 RP astrae queste sorgenti permettendo:
 - comporle in modo semplice.
 - gestire gli errori che possono sorgere
-- ti fa scrivere codice molto più multi-thread e resource-efficient
+- scrivere codice nativamente multi-thread e resource-efficient senza neanche che te ne accorgi
 
 Creiamo il progetto su: https://start.spring.io/
-Primo facciamo una reactive webapp con spring boot, lombok e actuator, config client, H2 database, Spring data r2dbc: chiamo customer
+
+Primo facciamo una reactive webapp, con spring reative web, lombok, boot actuator, config client, H2 database, Spring data r2dbc: chiamo customer
+
 Usiamo le api reactive che, a differenza di quelle normali dove faccio una richiesta e attendo una risposta, mando assieme alla richiesta una callback e mi sgancio. Sarà poi l'executor ad invocare la reazione di risposta asincronamente.
 
-Creo Customer e CustomerRepository
+Mi arriverà nel tempo un flusso di dati che gestirò a dovere. Cambia il paradigma.
 
-Clicco su ReactiveCrudRepository per mostrare i metodi:
-NB: Publisher, è un Future che pubblicherà i dati una volta pronti, è qualcosa che pubblica dati asincronamente. Un consumer può registrarsi per ascoltare i risultati man mano che arrivano.
+Nome: Customer. Generate e importo come modulo
+
+Creo class Customer (dimentica ID sulla chiave) e interface CustomerRepository
+
+Ctrl+Click su ReactiveCrudRepository per mostrare i metodi:
+
+Notate: Publisher, è un Future che pubblicherà i dati una volta pronti, è qualcosa che pubblica dati asincronamente. 
+
+Un consumer può registrarsi per ascoltare i risultati man mano che arrivano.
 Ho 2 specializzazioni: Mono che pubblica 0 o 1, Flux che ne può pubblicare 0-->n, 
 
-Torno nel main e creo 
+Torno nella classe e dentro il main main e creo 
 @Bean
-ApplicationListener CTRL+S
-return new CTRL+S
+ApplicationListener ...
 
 Crea il DB aggiungengo il dbc e lanciando l'sql
+poi lancia e vedi che bomba, allora metti l'id, mostra che debuggare può diventare complesso e rilancia.
+SHIFT+F10
 
-poi lancia e vedi che non bomba, magari passa al metodo più conciso, e inserisci i log
+Adesso creo il rest-controller col solo GET e poi provalo col browser.
 
-Adesso creo il rest-controller e poi provalo.
-
-ORa nelle properties aggiungo functionality all'activator, una serie di management bean che mi permettono di controllare il mio ambinete, possono essere utilizzate da kubernate per monitorare il funzionamento.
-in particolare c'è health
+Ora nelle properties aggiungo functionality all'activator, una serie di management bean che mi permettono di controllare il mio ambinete, possono essere utilizzate da kubernate per monitorare il funzionamento.
+in particolare c'è health. Viene usato da kubernates per controllare se il container è acceso.
 
 Creo un controller per bloccare l'app. 
-curl -X POST localhost:8080/stop
 
-Posso dirgli di fare uno shutdown gracefull sempre nelle props
+curl -X POST localhost:8080/stop
 
 adesso creo un container usando le commodity fornite dal plugin springboot:
 mvn spring-boot:build-image
 
 Ai morsetti esterni prende del codice di diverso genere e ci crea un container analizzandone il contenuto. Puoi comunque farti il tuo Docker file, ma così è più veloce e consistente
-docker run -p8080:8080 rwa:0.0.1-SNAPSHOT
-
+docker run -p8080:8080 customer:0.0.1-SNAPSHOT
+---
 Ora faccio un secondo microservizio, con lombok, Config client e:
  RSocket, un metodo di call sviluppato da netflix, binario molto efficente (più di http2) e funziona molto bene con le reactive
- orders
+ 
+NOME: orders
 
-Creo dei dati di test e il mio controller rsocket
+scarico e unzippo.
+Creo il bean Order e poi il controller rsocket
 
-ho bisogno di un client:
+Attenzione ad utilizzare oggetti concorrenti perchè sarà tutto multithread.
+
+Nelle props cambia la porta con: spring.rsocket.server.port=8081
+
+ho bisogno di un client, cerca su google "rsc.jar client spring"
+
 wget -O rsc.jar https://github.com/making/rsc/releases/download/0.4.2/rsc-0.4.2.jar
+
 java -jar rsc.jar tcp://localhost:8081 --stream -r orders.3
 
+---
 Adesso mi serve il gateway, terzo microservizio. E' il punto che intercetta le richieste che arrivato alla rete, è qui che devo mettere AUTH, o redirect, routing, load balancing,
 compression, 
 Oltre a lombok, rsocket, config client, aggiungo reactive web e gateway
@@ -80,5 +102,5 @@ Questa chiamerà in parallelo due servizi, un http e un rsoket, aggrega i risult
 Posso aggiungere operatori per potenziare il funzionamento. In fondo a getCustomers posso mettere .retry,... 
 Ho un sacco di operatori built in che rendono more reliable, safe e scalable la mia funzionalità.
 
-Alibaba è fatto con questa filosofia.
+Alibaba e netflix sono fatti con questa filosofia.
 

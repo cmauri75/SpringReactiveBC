@@ -34,32 +34,6 @@ public class RwaApplication {
         SpringApplication.run(RwaApplication.class, args);
     }
 
-    //@Bean
-    ApplicationListener<ApplicationReadyEvent> readyO(CustomerRepository customerRepository, DatabaseClient dbc) {
-        return new ApplicationListener<ApplicationReadyEvent>() {
-            @Override
-            public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-                Mono<Integer> createDB = dbc.sql("create table  CUSTOMER (id serial primary key not null, name varchar(255) not null)").fetch().rowsUpdated();
-
-                Flux<String> names = Flux.just("cesare", "pipo", "pluto");
-                Flux<Customer> custs = names.map(name -> new Customer(null, name));
-                Flux<Customer> saved = custs.flatMap(cust -> customerRepository.save(cust));
-
-                //questo è il momento che scatena l'esecuzione, prima ho solo creato la catena
-                //saved.subscribe();
-                //però prima devo scatenare altre azioni:
-
-                createDB.thenMany(customerRepository.deleteAll())
-                        .thenMany(saved)
-                        .thenMany(customerRepository.findAll())
-                        .subscribe();
-
-                log.info("Done");
-
-            }
-        };
-    }
-
     @Bean
     ApplicationListener<ApplicationReadyEvent> ready(CustomerRepository customerRepository, DatabaseClient dbc) {
         return applicationReadyEvent -> {
