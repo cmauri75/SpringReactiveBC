@@ -5,8 +5,7 @@
 	<parent>
 		<groupId>net.reactive</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>gateway</artifactId>

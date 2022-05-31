@@ -1,4 +1,4 @@
-package net.tinvention.orders;
+package net.reactive.orders;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
