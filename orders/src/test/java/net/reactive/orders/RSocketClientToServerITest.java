@@ -43,9 +43,9 @@ public class RSocketClientToServerITest {
                 .create(result)
                 .thenConsumeWhile(x -> true, message -> {
                     log.debug("Consuming {}", message);
-                    assertThat(message.getCustomerId()).isEqualTo(1);
-                    assertThat(message.getOrderId()).isPositive();
-                    assertThat(message.getOrderId()).isLessThan(100);
+                    assertThat(message.customerId()).isEqualTo(1);
+                    assertThat(message.orderId()).isPositive();
+                    assertThat(message.orderId()).isLessThan(100);
                 })
                 .verifyComplete();
     }

@@ -1,11 +1,7 @@
 package net.reactive.gateway.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-@Data
-@AllArgsConstructor
-public class Order {
-    private Integer orderId;
-    private Integer CustomerId;
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+public record Order(Integer orderId, Integer CustomerId) {
 }

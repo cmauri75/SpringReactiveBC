@@ -46,7 +46,7 @@ public class CrmClient {
     public Flux<CustomerOrders> getCustomerOrders() {
         //launch multiple thread asynchronously with no need of thread, semaphore and so on
         Flux<Tuple2<Customer, List<Order>>> res = getCustomers().flatMap(customer ->
-                Mono.zip(Mono.just(customer), getOrdersOf(customer.getId()).collectList()));
+                Mono.zip(Mono.just(customer), getOrdersOf(customer.id()).collectList()));
 
         return res.map(tuple -> new CustomerOrders(tuple.getT1(), tuple.getT2()));
     }
