@@ -28,7 +28,7 @@ public class OrderSocketController {
     }
 
     /**
-     * rsoxkwr endpoint
+     * rsocket endpoint
      *
      * @param customerId
      * @return
