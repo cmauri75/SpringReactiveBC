@@ -18,7 +18,6 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ApplicationContext applicationContext;
 
-
     public Flux<Customer> findAll() {
         return customerRepository.findAll();
     }

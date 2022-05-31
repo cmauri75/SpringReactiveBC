@@ -18,11 +18,9 @@ class CustomerRestController {
 
     private final CustomerService customerService;
 
-
     @GetMapping("/customer")
     Flux<Customer> get() {
         return customerService.findAll();
-
     }
 
     @PostMapping("/stop")
