@@ -11,11 +11,8 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -24,13 +21,13 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class GatewayApplication {
 
     @Value("${customer.host}")
-    String customerHost;
+    private String customerHost;
     @Value("${customer.port}")
-    Integer customerPort;
+    private Integer customerPort;
     @Value("${order.host}")
-    String orderHost;
+    private String orderHost;
     @Value("${order.port}")
-    Integer orderPort;
+    private Integer orderPort;
 
 
     public static void main(String[] args) {
@@ -50,7 +47,7 @@ public class GatewayApplication {
                                                     .doFinally(signal -> log.info("After"));
                                         }))
                                 )
-                                .uri(customerHost+":"+customerPort) //destinazione
+                                .uri(customerHost + ":" + customerPort) //destinazione
         ).build();
     }
 
@@ -67,13 +64,10 @@ public class GatewayApplication {
 
     @Bean
     RouterFunction<ServerResponse> functionalReactiveHttRoute(CrmClient crm) {
+        log.info("Request received");
         //controller created using functional style instead of controller style
-        return route().GET("/cos", new HandlerFunction<ServerResponse>() {
-            @Override
-            public Mono<ServerResponse> handle(ServerRequest serverRequest) {
-                return ServerResponse.ok().body(crm.getCustomerOrders(), CustomerOrders.class);
-            }
-        }).build();
+        return route().GET("/cos", serverRequest ->
+                ServerResponse.ok().body(crm.getCustomerOrders(), CustomerOrders.class)).build();
     }
 }
 

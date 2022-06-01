@@ -36,6 +36,5 @@ public class OrderSocketController {
     @MessageMapping("orders.{customerId}")
     Flux<Order> getOrdersOf(@DestinationVariable Integer customerId) {
         return Flux.fromIterable(db.get(customerId));
-
     }
 }

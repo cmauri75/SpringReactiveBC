@@ -1,0 +1,38 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: customer-app
+  labels:
+    app: customer-app
+spec:
+  containers:
+    - name: customer-app
+      image: docker.io/library/customer:0.0.1-SNAPSHOT
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: customer-service
+spec:
+  selector:
+    app: customer-app
+  ports:
+    # Default port used by the image
+    - port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: customer-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/customer"
+            backend:
+              service:
+                name: customer-service
+                port:
+                  number: 8080
+---
